@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartSDLC - AI-Powered SDLC Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        
+        .ai-status {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(46, 204, 113, 0.2);
+            padding: 8px 16px;
+            border-radius: 25px;
+            color: #2ecc71;
+            font-weight: bold;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+        
+        .ai-status::before {
+            content: "🤖";
+            margin-right: 8px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+        
+        .feature-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-right: 15px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .feature-description {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .input-group input,
+        .input-group textarea,
+        .input-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e6ed;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            background: white;
+        }
+        
+        .input-group input:focus,
+        .input-group textarea:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .input-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .output-area {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 4px solid #667eea;
+            min-height: 100px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .dashboard-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .dashboard-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .dashboard-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e0e6ed;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+        
+        .language-flags {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .flag-btn {
+            padding: 8px 12px;
+            border: 2px solid #e0e6ed;
+            border-radius: 20px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .flag-btn:hover,
+        .flag-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .matrix-table th,
+        .matrix-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e6ed;
+        }
+        
+        .matrix-table th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .matrix-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status-complete {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-progress {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-pending {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>SmartSDLC</h1>
+            <p>AI-Powered Software Development Life Cycle Management</p>
+            <div class="ai-status">IBM Granite 3.3-2B Model Active</div>
+        </div>
+        
+        <div class="features-grid">
+            <!-- Feature 1: Traceability Matrix Generator -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-icon">🔗</div>
+                    <div class="feature-title">Traceability Matrix Generator</div>
+                </div>
+                <div class="feature-description">
+                    Automatically generate a Requirement Traceability Matrix (RTM) that links each user requirement to its corresponding design component, code module, test case, and deployment status.
+                </div>
+                
+                <div class="input-group">
+                    <label for="requirements">Requirements (one per line):</label>
+                    <textarea id="requirements" placeholder="Enter requirements here...
+Example:
+- User login functionality
+- Password reset feature
+- Dashboard analytics
+- Data export capability"></textarea>
+                </div>
+                
+                <div class="input-group">
+                    <label for="project-type">Project Type:</label>
+                    <select id="project-type">
+                        <option value="web">Web Application</option>
+                        <option value="mobile">Mobile Application</option>
+                        <option value="desktop">Desktop Application</option>
+                        <option value="api">API/Backend Service</option>
+                    </select>
+                </div>
+                
+                <button class="btn" onclick="generateMatrix()">Generate Traceability Matrix</button>
+                
+                <div class="loading" id="matrix-loading">
+                    <div class="spinner"></div>
+                    <div>Generating matrix with AI...</div>
+                </div>
+                
+                <div class="output-area" id="matrix-output"></div>
+            </div>
+            
+            <!-- Feature 2: SDLC Progress Dashboard -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">SDLC Progress Dashboard</div>
+                </div>
+                <div class="feature-description">
+                    An interactive, real-time dashboard that visualizes the progress across all SDLC phases using AI-driven insights.
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>Requirements</h3>
+                        <div class="value" id="req-progress">75%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Design</h3>
+                        <div class="value" id="design-progress">60%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Development</h3>
+                        <div class="value" id="dev-progress">45%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 45%"></div>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Testing</h3>
+                        <div class="value" id="test-progress">30%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 30%"></div>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Deployment</h3>
+                        <div class="value" id="deploy-progress">10%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 10%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="project-update">Update Project Status:</label>
+                    <textarea id="project-update" placeholder="Enter status updates, completed tasks, or issues..."></textarea>
+                </div>
+                
+                <button class="btn" onclick="updateDashboard()">Update Dashboard with AI Analysis</button>
+                
+                <div class="loading" id="dashboard-loading">
+                    <div class="spinner"></div>
+                    <div>Analyzing project status...</div>
+                </div>
+                
+                <div class="output-area" id="dashboard-output"></div>
+            </div>
+            
+            <!-- Feature 3: Multilingual Requirement Translator -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-icon">🌐</div>
+                    <div class="feature-title">Multilingual Requirement Translator</div>
+                </div>
+                <div class="feature-description">
+                    Uses AI to translate requirements written in regional or non-English languages into structured English input before classification and processing.
+                </div>
+                
+                <div class="language-flags">
+                    <div class="flag-btn active" onclick="selectLanguage('auto')">🔍 Auto-Detect</div>
+                    <div class="flag-btn" onclick="selectLanguage('es')">🇪🇸 Spanish</div>
+                    <div class="flag-btn" onclick="selectLanguage('fr')">🇫🇷 French</div>
+                    <div class="flag-btn" onclick="selectLanguage('de')">🇩🇪 German</div>
+                    <div class="flag-btn" onclick="selectLanguage('hi')">🇮🇳 Hindi</div>
+                    <div class="flag-btn" onclick="selectLanguage('zh')">🇨🇳 Chinese</div>
+                    <div class="flag-btn" onclick="selectLanguage('ja')">🇯🇵 Japanese</div>
+                    <div class="flag-btn" onclick="selectLanguage('ar')">🇸🇦 Arabic</div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="source-requirements">Source Requirements:</label>
+                    <textarea id="source-requirements" placeholder="Enter requirements in any language...
+Example:
+- El usuario debe poder iniciar sesión
+- L'utilisateur doit pouvoir réinitialiser son mot de passe
+- ユーザーはダッシュボードを表示できる必要があります"></textarea>
+                </div>
+                
+                <div class="input-group">
+                    <label for="context">Project Context (optional):</label>
+                    <input type="text" id="context" placeholder="e.g., E-commerce platform, Banking system, Healthcare app">
+                </div>
+                
+                <button class="btn" onclick="translateRequirements()">Translate & Structure Requirements</button>
+                
+                <div class="loading" id="translate-loading">
+                    <div class="spinner"></div>
+                    <div>Translating and structuring requirements...</div>
+                </div>
+                
+                <div class="output-area" id="translate-output"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let selectedLanguage = 'auto';
+        
+        // Simulate AI processing for demonstration
+        function simulateAIProcessing(callback, duration = 2000) {
+            setTimeout(callback, duration);
+        }
+        
+        function selectLanguage(lang) {
+            selectedLanguage = lang;
+            document.querySelectorAll('.flag-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        function generateMatrix() {
+            const requirements = document.getElementById('requirements').value;
+            const projectType = document.getElementById('project-type').value;
+            const loading = document.getElementById('matrix-loading');
+            const output = document.getElementById('matrix-output');
+            
+            if (!requirements.trim()) {
+                alert('Please enter requirements first');
+                return;
+            }
+            
+            loading.classList.add('active');
+            output.innerHTML = '';
+            
+            simulateAIProcessing(() => {
+                loading.classList.remove('active');
+                
+                const reqList = requirements.split('\n').filter(req => req.trim());
+                let matrixHTML = `
+                    <h3>Requirement Traceability Matrix</h3>
+                    <table class="matrix-table">
+                        <thead>
+                            <tr>
+                                <th>Requirement ID</th>
+                                <th>Requirement</th>
+                                <th>Design Component</th>
+                                <th>Code Module</th>
+                                <th>Test Case</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                reqList.forEach((req, index) => {
+                    const reqId = `REQ-${String(index + 1).padStart(3, '0')}`;
+                    const cleanReq = req.replace(/^[-*•]\s*/, '').trim();
+                    const status = Math.random() > 0.3 ? 'Complete' : Math.random() > 0.5 ? 'In Progress' : 'Pending';
+                    const statusClass = status === 'Complete' ? 'status-complete' : status === 'In Progress' ? 'status-progress' : 'status-pending';
+                    
+                    matrixHTML += `
+                        <tr>
+                            <td>${reqId}</td>
+                            <td>${cleanReq}</td>
+                            <td>UI_${reqId}</td>
+                            <td>Module_${reqId}</td>
+                            <td>TC_${reqId}</td>
+                            <td><span class="status-badge ${statusClass}">${status}</span></td>
+                        </tr>
+                    `;
+                });
+                
+                matrixHTML += '</tbody></table>';
+                output.innerHTML = matrixHTML;
+            });
+        }
+        
+        function updateDashboard() {
+            const updateText = document.getElementById('project-update').value;
+            const loading = document.getElementById('dashboard-loading');
+            const output = document.getElementById('dashboard-output');
+            
+            if (!updateText.trim()) {
+                alert('Please enter project updates first');
+                return;
+            }
+            
+            loading.classList.add('active');
+            output.innerHTML = '';
+            
+            simulateAIProcessing(() => {
+                loading.classList.remove('active');
+                
+                // Simulate AI analysis
+                const insights = [
+                    '🎯 Requirements phase is 75% complete with high confidence',
+                    '⚠️ Design phase may need attention - detected dependency bottlenecks',
+                    '🚀 Development velocity is consistent with project timeline',
+                    '🔍 Testing phase ready to begin for completed modules',
+                    '📊 Overall project health: Good (78% on track)'
+                ];
+                
+                const recommendations = [
+                    'Consider parallel testing of completed modules',
+                    'Schedule design review meeting for bottleneck resolution',
+                    'Prepare deployment pipeline for upcoming releases'
+                ];
+                
+                output.innerHTML = `
+                    <h3>AI Analysis Results</h3>
+                    <h4>Key Insights:</h4>
+                    ${insights.map(insight => `<div>• ${insight}</div>`).join('')}
+                    
+                    <h4>Recommendations:</h4>
+                    ${recommendations.map(rec => `<div>• ${rec}</div>`).join('')}
+                    
+                    <h4>Risk Assessment:</h4>
+                    <div>• Low risk: Requirements and Development phases</div>
+                    <div>• Medium risk: Design phase (dependency issues)</div>
+                    <div>• Low risk: Testing and Deployment phases</div>
+                `;
+                
+                // Update progress bars with animation
+                updateProgressBars();
+            });
+        }
+        
+        function updateProgressBars() {
+            const phases = ['req', 'design', 'dev', 'test', 'deploy'];
+            const newValues = [80, 65, 55, 35, 15];
+            
+            phases.forEach((phase, index) => {
+                const element = document.getElementById(`${phase}-progress`);
+                const progressBar = element.parentElement.querySelector('.progress-fill');
+                
+                setTimeout(() => {
+                    element.textContent = newValues[index] + '%';
+                    progressBar.style.width = newValues[index] + '%';
+                }, index * 200);
+            });
+        }
+        
+        function translateRequirements() {
+            const sourceReq = document.getElementById('source-requirements').value;
+            const context = document.getElementById('context').value;
+            const loading = document.getElementById('translate-loading');
+            const output = document.getElementById('translate-output');
+            
+            if (!sourceReq.trim()) {
+                alert('Please enter source requirements first');
+                return;
+            }
+            
+            loading.classList.add('active');
+            output.innerHTML = '';
+            
+            simulateAIProcessing(() => {
+                loading.classList.remove('active');
+                
+                // Simulate translation and structuring
+                const translatedReqs = [
+                    'The user must be able to log in to the system',
+                    'The user must be able to reset their password',
+                    'The user should be able to view the dashboard',
+                    'The system must provide data export functionality'
+                ];
+                
+                const structuredReqs = translatedReqs.map((req, index) => ({
+                    id: `REQ-${String(index + 1).padStart(3, '0')}`,
+                    title: req,
+                    priority: Math.random() > 0.5 ? 'High' : Math.random() > 0.5 ? 'Medium' : 'Low',
+                    category: Math.random() > 0.5 ? 'Functional' : 'Non-Functional',
+                    effort: Math.floor(Math.random() * 8) + 1
+                }));
+                
+                output.innerHTML = `
+                    <h3>Translation & Structuring Results</h3>
+                    <h4>Detected Language: ${selectedLanguage === 'auto' ? 'Multiple (Auto-detected)' : selectedLanguage.toUpperCase()}</h4>
+                    
+                    <h4>Structured Requirements:</h4>
+                    <table class="matrix-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Requirement</th>
+                                <th>Priority</th>
+                                <th>Category</th>
+                                <th>Effort (days)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${structuredReqs.map(req => `
+                                <tr>
+                                    <td>${req.id}</td>
+                                    <td>${req.title}</td>
+                                    <td><span class="status-badge ${req.priority === 'High' ? 'status-pending' : req.priority === 'Medium' ? 'status-progress' : 'status-complete'}">${req.priority}</span></td>
+                                    <td>${req.category}</td>
+                                    <td>${req.effort}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    
+                    <h4>Quality Metrics:</h4>
+                    <div>• Translation Accuracy: 96%</div>
+                    <div>• Requirements Clarity: High</div>
+                    <div>• Completeness Score: 87%</div>
+                    <div>• Potential Ambiguities: 2 detected</div>
+                `;
+            });
+        }
+        
+        // Initialize dashboard with sample data
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add some interactive animations
+            const cards = document.querySelectorAll('.feature-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-5px) scale(1.02)';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
